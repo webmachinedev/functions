@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func FunctionIndex() ([]string, error) {
+func FunctionIndex() (functions []string, err error) {
 	r, err := http.Get("https://raw.githubusercontent.com/webmachinedev/functions/main/index.json")
 	if err != nil {
 		return nil, err

@@ -5,7 +5,7 @@ import (
 	"text/template"
 )
 
-var vercelfunctiontmpl string = `package {{ .PackageName}}
+var vercelfunctiontmpl string = `package {{ .GoPackageName }}
 
 import (
 	"encoding/json"
@@ -15,11 +15,13 @@ import (
 	"github.com/webmachinedev/types"
 )
 
-type Request struct {{{ range .Inputs }}
+type Request struct {
+{{ range .Inputs }}
 	{{ .Name }} {{ .Type }}
 {{ end }}}
 
-type Response struct {{{ range .Outputs }}
+type Response struct {
+{{ range .Outputs }}
 	{{ .Name }} {{ .Type }}
 {{ end }}}
 
@@ -41,7 +43,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 }
 `
 
-func GenerateVercelAPI() (map[string]string, error) {
+func GenerateVercelAPI() (mutation map[string]string, err error) {
 	filetmpl, err := template.New("vercelfunction").Parse(vercelfunctiontmpl)
 	if err != nil {
 		panic(err)
@@ -59,15 +61,14 @@ func GenerateVercelAPI() (map[string]string, error) {
 		if err != nil {
 			return nil, err
 		}
-
-		path := "api/"+function.GoPackageName()+".go"
-
+		
 		contents := bytes.NewBuffer(nil)
 		err = filetmpl.Execute(contents, function)
 		if err != nil {
 			return nil, err
 		}
-
+		
+		path := "api/"+function.GoPackageName+"/index.go"
 		files[path] = contents.String()
 	}
 
