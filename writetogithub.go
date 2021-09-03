@@ -10,14 +10,14 @@ import (
 )
 
 
-func WriteToGithub(githubkey, commitmessage, branchname, owner, repo string, changes map[string]string) error {
+func WriteToGithub(owner, repo, branch string, changes map[string]string, commitmessage, githubkey string) error {
 	ctx := context.Background()
 	token := oauth2.Token{AccessToken: githubkey}
 	ts := oauth2.StaticTokenSource(&token)
 	tc := oauth2.NewClient(ctx, ts)
 	client := github.NewClient(tc)
 
-	ref, _, err := client.Git.GetRef(ctx, owner, repo, "heads/"+branchname)
+	ref, _, err := client.Git.GetRef(ctx, owner, repo, "heads/"+branch)
 	if err != nil {
 		return err
 	}
@@ -68,7 +68,7 @@ func WriteToGithub(githubkey, commitmessage, branchname, owner, repo string, cha
 		return err
 	}
 
-	refname := "heads/" + branchname
+	refname := "heads/" + branch
 	ref = &github.Reference{
 		Ref: &refname,
 		Object: &github.GitObject{
