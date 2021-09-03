@@ -60,7 +60,7 @@ func GenerateVercelAPI() (map[string]string, error) {
 			return nil, err
 		}
 
-		path := "api/"+function.GoFileName()
+		path := "api/"+function.GoPackageName()+".go"
 
 		contents := bytes.NewBuffer(nil)
 		err = filetmpl.Execute(contents, function)
